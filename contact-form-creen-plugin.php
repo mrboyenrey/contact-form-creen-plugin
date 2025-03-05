@@ -71,7 +71,7 @@ function mmcf_process_form_submission() {
     $turnstile_response = sanitize_text_field( $_POST['cf-turnstile-response'] );
 
     // Replace "YOUR_SECRET_KEY" with your actual Cloudflare Turnstile secret key.
-    $secret_key = 'YOUR_SECRET_KEY';
+    $secret_key = 'YOUR_SECRET_KEY'; 
 
     // Make a POST request to Cloudflare Turnstile verification API.
     $verify_response = wp_remote_post( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', array(
