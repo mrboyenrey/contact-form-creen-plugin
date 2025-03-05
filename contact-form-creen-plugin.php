@@ -20,9 +20,9 @@ function mmcf_contact_form_shortcode() {
     $nonce_field = wp_nonce_field( 'mmcf_contact_form_action', 'mmcf_contact_nonce', true, false );
 
     // Cloudflare Turnstile widget code.
-    // Replace "YOUR_SITE_KEY" with your actual Cloudflare Turnstile site key.
+    // Replace "" with your actual Cloudflare Turnstile site key.
     $turnstile_widget = '
-    <div class="cf-turnstile" data-sitekey="0x4AAAAAAA_mFViv8lOkmWlU"></div>
+    <div class="cf-turnstile" data-sitekey="YOUR_SITE_KEY"></div>
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     ';
 
@@ -71,7 +71,7 @@ function mmcf_process_form_submission() {
     $turnstile_response = sanitize_text_field( $_POST['cf-turnstile-response'] );
 
     // Replace "YOUR_SECRET_KEY" with your actual Cloudflare Turnstile secret key.
-    $secret_key = '0x4AAAAAAA_mFblADlP5rpUV2CrSupZ_yfg';
+    $secret_key = 'YOUR_SECRET_KEY';
 
     // Make a POST request to Cloudflare Turnstile verification API.
     $verify_response = wp_remote_post( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', array(
@@ -99,7 +99,7 @@ function mmcf_process_form_submission() {
     $message = sanitize_textarea_field( $_POST['mmcf_message'] );
 
     // Prepare the email.
-    $to      = 'support@creensolutions.com'; // Replace with your Gmail address.
+    $to      = 'emailto'; // Replace with your Gmail address.
     $subject = 'New Contact Form Submission from ' . $name;
     $body    = "Name: $name\nEmail: $email\n\nMessage:\n$message";
     $headers = array( 'Content-Type: text/plain; charset=UTF-8' );
