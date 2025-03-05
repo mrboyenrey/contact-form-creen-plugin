@@ -12,22 +12,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Shortcode to display the contact form.
+ * Shortcode to display the contact form along with a success message if applicable.
  */
 function mmcf_contact_form_shortcode() {
+
+    // Check for a success query parameter and output a success message if present.
+    $success_message = '';
+    if ( isset( $_GET['mmcf_sent'] ) && $_GET['mmcf_sent'] == 1 ) {
+        $success_message = '<p class="mmcf-success" style="color: green;">Your message was sent successfully!</p>';
+    }
 
     // Create a nonce field to secure form submissions.
     $nonce_field = wp_nonce_field( 'mmcf_contact_form_action', 'mmcf_contact_nonce', true, false );
 
     // Cloudflare Turnstile widget code.
-    // Replace "" with your actual Cloudflare Turnstile site key.
+    // Replace "YOUR_SITE_KEY" with your actual Cloudflare Turnstile site key.
     $turnstile_widget = '
-    <div class="cf-turnstile" data-sitekey="YOUR_SITE_KEY"></div>
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAAA_mFViv8lOkmWlU"></div>
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     ';
 
     // Build the form.
     $form = '
+    ' . $success_message . '
     <form action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" method="POST">
         ' . $nonce_field . '
         <!-- The action value determines which hook we use to process this form -->
@@ -71,7 +78,7 @@ function mmcf_process_form_submission() {
     $turnstile_response = sanitize_text_field( $_POST['cf-turnstile-response'] );
 
     // Replace "YOUR_SECRET_KEY" with your actual Cloudflare Turnstile secret key.
-    $secret_key = 'YOUR_SECRET_KEY'; 
+    $secret_key = '0x4AAAAAAA_mFblADlP5rpUV2CrSupZ_yfg';
 
     // Make a POST request to Cloudflare Turnstile verification API.
     $verify_response = wp_remote_post( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', array(
@@ -99,7 +106,7 @@ function mmcf_process_form_submission() {
     $message = sanitize_textarea_field( $_POST['mmcf_message'] );
 
     // Prepare the email.
-    $to      = 'emailto'; // Replace with your Gmail address.
+    $to      = 'support@creensolutions.com'; // Replace with your Gmail address.
     $subject = 'New Contact Form Submission from ' . $name;
     $body    = "Name: $name\nEmail: $email\n\nMessage:\n$message";
     $headers = array( 'Content-Type: text/plain; charset=UTF-8' );
@@ -107,7 +114,7 @@ function mmcf_process_form_submission() {
     // Send the email.
     wp_mail( $to, $subject, $body, $headers );
 
-    // Optionally, redirect back with a success parameter.
+    // Redirect back to the referring page with a success parameter.
     $redirect_url = add_query_arg( 'mmcf_sent', '1', wp_get_referer() );
     wp_safe_redirect( $redirect_url );
     exit;
