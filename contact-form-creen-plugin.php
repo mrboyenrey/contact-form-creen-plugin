@@ -27,7 +27,7 @@ function mmcf_contact_form_shortcode() {
 
     // Cloudflare Turnstile widget code.
     $turnstile_widget = '
-    <div class="cf-turnstile" data-sitekey="0x4AAAAAAA_mFViv8lOkmWlU"></div>
+    <div class="cf-turnstile" data-sitekey="SITE-KEY"></div>
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     ';
 
@@ -77,7 +77,7 @@ function mmcf_process_form_submission() {
     $turnstile_response = sanitize_text_field( $_POST['cf-turnstile-response'] );
 
     // Replace "YOUR_SECRET_KEY" with your actual Cloudflare Turnstile secret key.
-    $secret_key = '0x4AAAAAAA_mFblADlP5rpUV2CrSupZ_yfg';
+    $secret_key = 'YOUR_SECRET_KEY';
 
     // Make a POST request to Cloudflare Turnstile verification API.
     $verify_response = wp_remote_post( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', array(
@@ -120,60 +120,3 @@ function mmcf_process_form_submission() {
 }
 add_action( 'admin_post_nopriv_mmcf_send_form_data', 'mmcf_process_form_submission' );
 add_action( 'admin_post_mmcf_send_form_data', 'mmcf_process_form_submission' );
-
-/**
- * Add a menu item for the plugin settings.
- */
-function mmcf_add_admin_menu() {
-    add_menu_page(
-        'Contact Form CREEN Settings', // Page title
-        'CREEN Settings',             // Menu title
-        'manage_options',             // Capability
-        'mmcf_settings',              // Menu slug
-        'mmcf_settings_page',         // Callback function
-        'dashicons-admin-generic',    // Icon
-        100                           // Position
-    );
-}
-add_action( 'admin_menu', 'mmcf_add_admin_menu' );
-
-/**
- * Register settings for the plugin.
- */
-function mmcf_register_settings() {
-    register_setting( 'mmcf_settings_group', 'mmcf_turnstile_site_key' );
-    register_setting( 'mmcf_settings_group', 'mmcf_turnstile_secret_key' );
-}
-add_action( 'admin_init', 'mmcf_register_settings' );
-
-/**
- * Display the settings page.
- */
-function mmcf_settings_page() {
-    ?>
-    <div class="wrap">
-        <h1>Contact Form CREEN Settings</h1>
-        <form method="post" action="options.php">
-            <?php
-            settings_fields( 'mmcf_settings_group' );
-            do_settings_sections( 'mmcf_settings_group' );
-            ?>
-            <table class="form-table">
-                <tr valign="top">
-                    <th scope="row">Turnstile Site Key</th>
-                    <td>
-                        <input type="text" name="mmcf_turnstile_site_key" value="<?php echo esc_attr( get_option( 'mmcf_turnstile_site_key' ) ); ?>" style="width: 400px;" />
-                    </td>
-                </tr>
-                <tr valign="top">
-                    <th scope="row">Turnstile Secret Key</th>
-                    <td>
-                        <input type="text" name="mmcf_turnstile_secret_key" value="<?php echo esc_attr( get_option( 'mmcf_turnstile_secret_key' ) ); ?>" style="width: 400px;" />
-                    </td>
-                </tr>
-            </table>
-            <?php submit_button(); ?>
-        </form>
-    </div>
-    <?php
-}
