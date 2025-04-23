@@ -3,7 +3,7 @@
 Plugin Name: Contact Form CREEN Plugin
 Plugin URI: http://www.creensolutions.com
 Description: A creen manual contact form that emails submissions to Gmail | Turnstile Included
-Version: 1.1
+Version: 1.0
 Author: Boien Reyes
 */
 
@@ -26,80 +26,39 @@ function mmcf_add_settings_page() {
 add_action( 'admin_menu', 'mmcf_add_settings_page' );
 
 /**
- * Render the settings page with tabs.
+ * Render the settings page.
  */
 function mmcf_render_settings_page() {
     if ( ! current_user_can( 'manage_options' ) ) {
         return;
     }
 
-    // Determine the active tab.
-    $active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'general';
-
     // Save settings if the form is submitted.
     if ( isset( $_POST['mmcf_save_settings'] ) && check_admin_referer( 'mmcf_save_settings_action', 'mmcf_save_settings_nonce' ) ) {
-        if ( $active_tab === 'general' ) {
-            update_option( 'mmcf_turnstile_site_key', sanitize_text_field( $_POST['mmcf_turnstile_site_key'] ) );
-            update_option( 'mmcf_turnstile_secret_key', sanitize_text_field( $_POST['mmcf_turnstile_secret_key'] ) );
-        } elseif ( $active_tab === 'automation' ) {
-            update_option( 'mmcf_automation_enabled', isset( $_POST['mmcf_automation_enabled'] ) ? '1' : '0' );
-            update_option( 'mmcf_automation_email_subject', sanitize_text_field( $_POST['mmcf_automation_email_subject'] ) );
-            update_option( 'mmcf_automation_email_body', sanitize_textarea_field( $_POST['mmcf_automation_email_body'] ) );
-        }
+        update_option( 'mmcf_turnstile_site_key', sanitize_text_field( $_POST['mmcf_turnstile_site_key'] ) );
+        update_option( 'mmcf_turnstile_secret_key', sanitize_text_field( $_POST['mmcf_turnstile_secret_key'] ) );
         echo '<div class="updated"><p>Settings saved successfully.</p></div>';
     }
 
     // Retrieve current settings.
     $site_key = get_option( 'mmcf_turnstile_site_key', '' );
     $secret_key = get_option( 'mmcf_turnstile_secret_key', '' );
-    $automation_enabled = get_option( 'mmcf_automation_enabled', '1' ); // Default to enabled.
-    $automation_email_subject = get_option( 'mmcf_automation_email_subject', 'Thank you for contacting us!' );
-    $automation_email_body = get_option( 'mmcf_automation_email_body', "Hi {name},\n\nThank you for reaching out to us. We have received your message and will get back to you shortly.\n\nBest regards,\nThe CREEN Solutions Team" );
 
     ?>
     <div class="wrap">
         <h1>Contact Form CREEN Settings</h1>
-        <h2 class="nav-tab-wrapper">
-            <a href="?page=mmcf-settings&tab=general" class="nav-tab <?php echo $active_tab === 'general' ? 'nav-tab-active' : ''; ?>">General</a>
-            <a href="?page=mmcf-settings&tab=automation" class="nav-tab <?php echo $active_tab === 'automation' ? 'nav-tab-active' : ''; ?>">Automation</a>
-        </h2>
         <form method="POST">
             <?php wp_nonce_field( 'mmcf_save_settings_action', 'mmcf_save_settings_nonce' ); ?>
-            <?php if ( $active_tab === 'general' ) : ?>
-                <table class="form-table">
-                    <tr>
-                        <th scope="row"><label for="mmcf_turnstile_site_key">Turnstile Site Key</label></th>
-                        <td><input type="text" id="mmcf_turnstile_site_key" name="mmcf_turnstile_site_key" value="<?php echo esc_attr( $site_key ); ?>" class="regular-text" /></td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="mmcf_turnstile_secret_key">Turnstile Secret Key</label></th>
-                        <td><input type="text" id="mmcf_turnstile_secret_key" name="mmcf_turnstile_secret_key" value="<?php echo esc_attr( $secret_key ); ?>" class="regular-text" /></td>
-                    </tr>
-                </table>
-            <?php elseif ( $active_tab === 'automation' ) : ?>
-                <table class="form-table">
-                    <tr>
-                        <th scope="row"><label for="mmcf_automation_enabled">Enable Automation</label></th>
-                        <td>
-                            <input type="checkbox" id="mmcf_automation_enabled" name="mmcf_automation_enabled" value="1" <?php checked( $automation_enabled, '1' ); ?> />
-                            <label for="mmcf_automation_enabled">Enable sending confirmation emails</label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="mmcf_automation_email_subject">Confirmation Email Subject</label></th>
-                        <td><input type="text" id="mmcf_automation_email_subject" name="mmcf_automation_email_subject" value="<?php echo esc_attr( $automation_email_subject ); ?>" class="regular-text" /></td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="mmcf_automation_email_body">Confirmation Email Body</label></th>
-                        <td><textarea id="mmcf_automation_email_body" name="mmcf_automation_email_body" rows="5" class="large-text"><?php echo esc_textarea( $automation_email_body ); ?></textarea></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <p><strong>Note:</strong> Use <code>{name}</code> to include the user's name in the email body.</p>
-                        </td>
-                    </tr>
-                </table>
-            <?php endif; ?>
+            <table class="form-table">
+                <tr>
+                    <th scope="row"><label for="mmcf_turnstile_site_key">Turnstile Site Key</label></th>
+                    <td><input type="text" id="mmcf_turnstile_site_key" name="mmcf_turnstile_site_key" value="<?php echo esc_attr( $site_key ); ?>" class="regular-text" /></td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="mmcf_turnstile_secret_key">Turnstile Secret Key</label></th>
+                    <td><input type="text" id="mmcf_turnstile_secret_key" name="mmcf_turnstile_secret_key" value="<?php echo esc_attr( $secret_key ); ?>" class="regular-text" /></td>
+                </tr>
+            </table>
             <?php submit_button( 'Save Settings', 'primary', 'mmcf_save_settings' ); ?>
         </form>
     </div>
@@ -205,26 +164,14 @@ function mmcf_process_form_submission() {
     $email   = sanitize_email( $_POST['mmcf_email'] );
     $message = sanitize_textarea_field( $_POST['mmcf_message'] );
 
-    // Prepare the email to the admin.
+    // Prepare the email.
     $to      = 'support@creensolutions.com'; // Replace with your Gmail address.
     $subject = 'New Contact Form Submission from ' . $name;
     $body    = "Name: $name\nEmail: $email\n\nMessage:\n$message";
     $headers = array( 'Content-Type: text/plain; charset=UTF-8' );
 
-    // Send the email to the admin.
+    // Send the email.
     wp_mail( $to, $subject, $body, $headers );
-
-    // Check if automation is enabled.
-    $automation_enabled = get_option( 'mmcf_automation_enabled', '1' );
-    if ( $automation_enabled === '1' ) {
-        // Prepare and send a confirmation email to the user.
-        $user_subject = get_option( 'mmcf_automation_email_subject', 'Thank you for contacting us!' );
-        $user_body_template = get_option( 'mmcf_automation_email_body', "Hi {name},\n\nThank you for reaching out to us. We have received your message and will get back to you shortly.\n\nBest regards,\nThe CREEN Solutions Team" );
-        $user_body = str_replace( '{name}', $name, $user_body_template );
-        $user_headers = array( 'Content-Type: text/plain; charset=UTF-8' );
-
-        wp_mail( $email, $user_subject, $user_body, $user_headers );
-    }
 
     // Redirect back to the referring page with a success parameter.
     $redirect_url = add_query_arg( 'mmcf_sent', '1', wp_get_referer() );
