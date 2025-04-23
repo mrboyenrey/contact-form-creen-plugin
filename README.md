@@ -39,7 +39,8 @@ The plugin includes an admin dashboard for managing settings:
 3. Use the "Automation" tab to enable or disable confirmation emails and customize the email content.
 
 ## Support
-For support, please contact [support@creensolutions.com](mailto:support@creensolutions.com).
+For support, please contact [support@creensolutions.com](mailto:support@creensolutions.com) | 
+Developer in Charge [mrboyenrey@gmail.com](mailto:mrboyenrey@gmail.com).
 
 ## Changelog
 ### Version 1.1
